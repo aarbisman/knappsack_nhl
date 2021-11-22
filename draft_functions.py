@@ -1,7 +1,9 @@
 def clean_dk_data(file):
-        
-    ## REad in the file
-    players_df = pd.read_csv(file)
+    
+    from pandas import read_csv  
+    
+    ## Read in the file
+    players_df = read_csv(file)
     
     ## Get the position name and drop non essential columns
     players_df["Position"] = players_df["Roster Position"].str[0]
@@ -26,6 +28,9 @@ def get_optimal_set(players_list, budget, inc, limits):
     # inc -- an increment that you go up/down by when you use the algorithm--ex:100 
     # limits -- a dictionary of constraints for each position--ex:{"C": 2,"W": 3 ,"D" : 2,"G": 1}
     
+    
+    from copy import deepcopy
+
     
     ## first we divide all working money sums by the increment
     ## This allows us to control the granularity of the algorith
@@ -124,12 +129,12 @@ def get_optimal_set(players_list, budget, inc, limits):
     ## To return the optimized investment portfolio, we create an empty return list
     ## and initialize our item marker value, and a money iteration value
     ret_list = []
-    players_remaining = copy.deepcopy(nPlayers)
+    players_remaining = deepcopy(nPlayers)
     i = -1
-    centers = copy.deepcopy(limits["C"])
-    wings = copy.deepcopy(limits["W"])
-    defenders = copy.deepcopy(limits["D"])
-    goalies = copy.deepcopy(limits["G"])
+    centers = deepcopy(limits["C"])
+    wings = deepcopy(limits["W"])
+    defenders = deepcopy(limits["D"])
+    goalies = deepcopy(limits["G"])
     
     ## we loop through our table until our value (signifying the current item) is at 0
     while players_remaining > 0:
@@ -172,8 +177,10 @@ def get_optimal_set(players_list, budget, inc, limits):
 
 def draft_algo_for_dk(data_for_algo, cap, inc, limits, ir_list, players_not_wanted):
    
+    from copy import deepcopy
+
     remaining_players = [player for player in data_for_algo if player[0] not in ir_list]    
-    remaining_players = [player for player in data_for_algo if player[0] not in players_not_wanted]    
+    remaining_players = [player for player in remaining_players if player[0] not in players_not_wanted]    
 
     best_combo = ''
     highest_points = -1
@@ -181,7 +188,7 @@ def draft_algo_for_dk(data_for_algo, cap, inc, limits, ir_list, players_not_want
     
     ## If you get one extra center
     
-    limits_extra_center = copy.deepcopy(limits)
+    limits_extra_center = deepcopy(limits)
     limits_extra_center["C"] += 1
     results_extra_center = get_optimal_set(remaining_players, cap, inc, limits_extra_center)
     total_points_extra_center = sum([player[2] for player in results_extra_center])
@@ -194,7 +201,7 @@ def draft_algo_for_dk(data_for_algo, cap, inc, limits, ir_list, players_not_want
     print('Extra Center:', total_points_extra_center, 'expected points')
 
     ## if you get one extra Wing    
-    limits_extra_wing = copy.deepcopy(limits)
+    limits_extra_wing = deepcopy(limits)
     limits_extra_wing["W"] += 1
     results_extra_wing = get_optimal_set(remaining_players, cap, inc, limits_extra_wing)
     total_points_extra_wing = sum([player[2] for player in results_extra_wing])
@@ -207,7 +214,7 @@ def draft_algo_for_dk(data_for_algo, cap, inc, limits, ir_list, players_not_want
     print('Extra Wing:', total_points_extra_wing, 'expected points')
 
     ## if you get one extra Defender    
-    limits_extra_defender = copy.deepcopy(limits)
+    limits_extra_defender = deepcopy(limits)
     limits_extra_defender["D"] += 1
     
     results_extra_defender = get_optimal_set(remaining_players, cap, inc, limits_extra_defender)
